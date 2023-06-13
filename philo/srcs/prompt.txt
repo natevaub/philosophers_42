@@ -1,0 +1,389 @@
+
+
+#ifndef PHILO_H
+# define PHILO_H
+
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <pthread.h>
+# include <sys/time.h>
+
+typedef struct s_philosopher
+{
+	int				is_thinking;
+	int				is_eating;
+	int				is_sleeping;
+	int				id;
+	int				x_ate;
+	int				left_fork;
+	int				right_fork;
+	long long		t_last_meal;
+	struct s_rules	*rules;
+	pthread_t		thread_id;
+}	t_philosopher;
+
+typedef struct s_rules
+{
+	int				nb_philo;
+	int				t_die;
+	int				t_sleep;
+	int				t_eat;
+	int				nb_eat;
+	int				died;
+	int				finished;
+	long long		first_timestamp;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	*state;
+	pthread_mutex_t	writing;
+	t_philosopher	*philosopher;
+}	t_rules;
+
+/* --- checks.c --- */
+int			death_check(t_philosopher *philo);
+int			meal_check(t_philosopher *philo);
+
+/* --- error-check.c --- */
+
+/* --- handle-state.c --- */
+int			philosopher(t_rules *rules);
+void		*routine(void *arg);
+void		thinking_state(t_philosopher *philo);
+void		eating_state(t_philosopher *philo);
+void		sleeping_state(t_philosopher *philo);
+
+/* --- init.c --- */
+
+int			check_valid_rules(int ac, char **av, t_rules *rules);
+int			init_mutex(t_rules *rules);
+int			init_basic_rules(char **av, t_rules *rules);
+int			init_philosopher(t_rules *rules);
+int			init_all(int ac, char **av, t_rules *rules);
+
+/* --- main.c --- */
+
+/* --- utils.c --- */
+int			ft_philo_atoi(char *s);
+long long	ft_timestamp(void);
+long long	ft_time_diff(long long past, long long now);
+void		print_state(t_rules *rules, int id, char *str);
+
+#endif
+
+int	death_check(t_philosopher *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < philo->rules->nb_philo)
+	{
+		pthread_mutex_lock(&(philo->rules->state[i]));
+		if (philo[i].t_last_meal == -1)
+		{
+			if (ft_time_diff(philo->rules->first_timestamp, ft_timestamp())
+				>= philo->rules->t_die)
+			{
+				print_state(philo->rules, philo[i].id, "died");
+				philo->rules->died = 1;
+				pthread_mutex_unlock(&(philo->rules->state[i]));
+				return (1);
+			}
+			pthread_mutex_unlock(&(philo->rules->state[i]));
+		}
+		else
+		{
+			if (ft_time_diff(philo[i].t_last_meal, ft_timestamp())
+				> philo->rules->t_die)
+			{
+				print_state(philo->rules, philo[i].id, "died");
+				philo->rules->died = 1;
+				pthread_mutex_unlock(&(philo->rules->state[i]));
+				return (1);
+			}
+			pthread_mutex_unlock(&(philo->rules->state[i]));
+		}
+		i++;
+	}
+	return (0);
+}
+
+int	meal_check(t_philosopher *philo)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	if (philo->rules->nb_eat == -1)
+		return (0);
+	while (i < philo->rules->nb_philo)
+	{
+		pthread_mutex_lock(&(philo->rules->state[i]));
+		if (philo[i].x_ate >= philo->rules->nb_eat)
+			count++;
+		else
+		{
+			pthread_mutex_unlock(&(philo->rules->state[i]));
+			break;
+		}
+		if (count == philo->rules->nb_philo)
+		{
+			pthread_mutex_unlock(&(philo->rules->state[i]));
+			return (1);
+		}
+		pthread_mutex_unlock(&(philo->rules->state[i]));
+		i++;
+	}
+	return (0);
+}
+
+void	thinking_state(t_philosopher *philo)
+{
+	if (philo->is_thinking == 1)
+	{
+		if (philo->id % 2 == 0)
+		{
+			pthread_mutex_lock(&(philo->rules->forks[philo->right_fork]));
+			print_state(philo->rules, philo->id, "has taken right fork");
+			pthread_mutex_lock(&(philo->rules->forks[philo->left_fork]));
+			print_state(philo->rules, philo->id, "has taken left fork");
+			philo->is_eating = 1;
+			philo->is_thinking = 0;
+		}
+		else
+		{
+			pthread_mutex_lock(&(philo->rules->forks[philo->left_fork]));
+			print_state(philo->rules, philo->id, "has taken left fork");
+			pthread_mutex_lock(&(philo->rules->forks[philo->right_fork]));
+			print_state(philo->rules, philo->id, "has taken right fork");
+			philo->is_eating = 1;
+			philo->is_thinking = 0;
+		}
+	}
+}
+
+void	eating_state(t_philosopher *philo)
+{
+	if (philo->is_eating == 1)
+	{
+		pthread_mutex_lock(&(philo->rules->state[philo->id]));
+		philo->t_last_meal = ft_timestamp();
+		pthread_mutex_unlock(&(philo->rules->state[philo->id]));
+		print_state(philo->rules, philo->id, "is eating");
+		usleep(philo->rules->t_eat * 1000);
+		pthread_mutex_unlock(&(philo->rules->forks[philo->right_fork]));
+		print_state(philo->rules, philo->id, "released right fork");
+		pthread_mutex_unlock(&(philo->rules->forks[philo->left_fork]));
+		print_state(philo->rules, philo->id, "released left fork");
+		pthread_mutex_lock(&(philo->rules->state[philo->id]));
+		philo->x_ate++;
+		pthread_mutex_unlock(&(philo->rules->state[philo->id]));
+		philo->is_eating = 0;
+		philo->is_sleeping = 1;
+	}
+}
+
+void	sleeping_state(t_philosopher *philo)
+{
+	if (philo->is_sleeping)
+	{
+		print_state(philo->rules, philo->id, "is sleeping");
+		usleep(philo->rules->t_sleep * 1000);
+		philo->is_sleeping = 0;
+		philo->is_thinking = 1;
+	}
+}
+
+int	check_valid_rules(int ac, char **av, t_rules *rules)
+{
+	if (ac < 5 || ac > 6)
+		return (1);
+	if (ft_philo_atoi(av[1]) < 1 || ft_philo_atoi(av[2]) < 0
+		|| ft_philo_atoi(av[3]) < 0 || ft_philo_atoi(av[4]) < 0)
+		return (1);
+	return (0);
+}
+
+int	init_mutex(t_rules *rules)
+{
+	int	i;
+
+	i = 0;
+	rules->forks = malloc(sizeof(pthread_mutex_t) * rules->nb_philo);
+	rules->state = malloc(sizeof(pthread_mutex_t) * rules->nb_philo);
+	while (i < rules->nb_philo)
+	{
+		if (pthread_mutex_init(&(rules->forks[i]), NULL) != 0)
+			return (1);
+		if (pthread_mutex_init(&(rules->state[i]), NULL) != 0)
+			return (1);
+		i++;
+	}
+	if (pthread_mutex_init(&(rules->writing), NULL) != 0)
+		return (1);
+	return (0);
+}
+
+int	init_basic_rules(char **av, t_rules *rules)
+{
+	rules->nb_philo = ft_philo_atoi(av[1]);
+	rules->t_die = ft_philo_atoi(av[2]);
+	rules->t_eat = ft_philo_atoi(av[3]);
+	rules->t_sleep = ft_philo_atoi(av[4]);
+	rules->nb_eat = -1;
+	return (0);
+}
+
+int	init_philosopher(t_rules *rules)
+{
+	int	i;
+
+	i = 0;
+	rules->philosopher = malloc(sizeof(t_philosopher) * rules->nb_philo);
+	while (i < rules->nb_philo)
+	{
+		rules->philosopher[i].is_thinking = 1;
+		rules->philosopher[i].is_eating = 0;
+		rules->philosopher[i].is_sleeping = 0;
+		rules->philosopher[i].id = i;
+		rules->philosopher[i].x_ate = 0;
+		rules->philosopher[i].left_fork = i;
+		rules->philosopher[i].right_fork = (i + 1) % rules->nb_philo;
+		rules->philosopher[i].t_last_meal = -1;
+		rules->philosopher[i].rules = rules;
+		i++;
+	}
+	return (0);
+}
+
+int	init_all(int ac, char **av, t_rules *rules)
+{
+	if (check_valid_rules(ac, av, rules) != 0)
+		return (1);
+	init_basic_rules(av, rules);
+	rules->first_timestamp = ft_timestamp();
+	rules->died = 0;
+	if (init_mutex(rules) != 0)
+		return (1);
+	if (av[5])
+	{
+		rules->nb_eat = ft_philo_atoi(av[5]);
+		if (rules->nb_eat <= 0)
+			return (1);
+	}
+	else
+		rules->nb_eat = -1;
+	if (init_philosopher(rules) != 0)
+		return (1);
+	return (0);
+}
+
+
+
+int	philosopher(t_rules *rules)
+{
+	int	i;
+
+	i = 0;
+	while (i < rules->nb_philo)
+	{
+		rules->philosopher[i].thread_id = pthread_create
+			(&(rules->philosopher[i].thread_id), NULL, &routine,
+				&(rules->philosopher[i]));
+			i++;
+	}
+	while (1)
+
+	{
+		if (death_check(rules->philosopher) == 1
+			|| meal_check(rules->philosopher) == 1)
+			break ;
+		usleep(5000);
+	}
+	while (i < rules->nb_philo)
+	{
+		pthread_join(rules->philosopher[i].thread_id, NULL);
+		i++;
+	}
+	return (0);
+}
+
+void	*routine(void *arg)
+{
+	t_philosopher	*philo;
+
+	philo = (t_philosopher *)arg;
+	while (1)
+	{
+		if (philo->is_thinking == 1)
+			thinking_state(philo);
+		if (philo->is_eating == 1)
+			eating_state(philo);
+		if (philo->is_sleeping == 1)
+			sleeping_state(philo);
+	}
+}#include "../includes/philo.h"
+
+int	ft_philo_atoi(char *s)
+{
+	int		res;
+	int		sign;
+
+	sign = 1;
+	res = 0;
+	while (*s == 32 || (*s >= '9' && *s <= 13))
+		s++;
+	if (*s == '-')
+	{
+		sign *= -1;
+		s++;
+	}
+	else if (*s == '+')
+		s++;
+	while (*s && *s >= '0' && *s <= '9')
+	{
+		res = res * 10 + *s - 48;
+		s++;
+	}
+	return (sign * res);
+}
+
+long long	ft_timestamp(void)
+{
+	struct timeval t;
+
+	gettimeofday(&t, NULL);
+	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
+}
+
+long long	ft_time_diff(long long past, long long now)
+{
+	return (now - past);
+}
+
+void	print_state(t_rules *rules, int id, char *str)
+{
+	pthread_mutex_lock(&(rules->writing));
+	if (!(rules->died))
+	{
+		printf("%lld ", ft_timestamp() - rules->first_timestamp);
+		printf("%d ", id + 1);
+		printf("%s \n", str);
+	}
+	pthread_mutex_unlock(&rules->writing);
+	return ;
+}
+
+int	main(int ac, char **av)
+{
+	t_rules *rules				= NULL;
+	rules = malloc(sizeof(t_rules));
+	if (init_all(ac, av, rules) != 0)
+	{
+		printf("Initialization failed\n");
+		exit(1);
+	}
+		
+	philosopher(rules);
+	return (0);
+}
