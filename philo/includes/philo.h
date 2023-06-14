@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 20:02:13 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/11 17:40:10 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/14 12:29:08 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,10 @@ int			meal_check(t_philosopher *philo);
 /* --- error-check.c --- */
 
 /* --- handle-state.c --- */
-int			philosopher(t_rules *rules);
-void		*routine(void *arg);
-void		thinking_state(t_philosopher *philo);
-void		eating_state(t_philosopher *philo);
-void		sleeping_state(t_philosopher *philo);
+t_philosopher	get_philo(t_philosopher *philo, int direction);
+void			thinking_state(t_philosopher *philo);
+void			eating_state(t_philosopher *philo);
+void			sleeping_state(t_philosopher *philo);
 
 /* --- init.c --- */
 
@@ -71,6 +70,10 @@ int			init_philosopher(t_rules *rules);
 int			init_all(int ac, char **av, t_rules *rules);
 
 /* --- main.c --- */
+
+/* --- philo.c --- */
+int			philosopher(t_rules *rules);
+void		*routine(void *arg);
 
 /* --- utils.c --- */
 int			ft_philo_atoi(char *s);

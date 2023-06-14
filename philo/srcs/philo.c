@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 16:48:18 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/12 23:18:45 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/14 13:07:21 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	philosopher(t_rules *rules)
 		if (death_check(rules->philosopher) == 1
 			|| meal_check(rules->philosopher) == 1)
 			break ;
-		usleep(5000);
+		usleep(2000);
 	}
 	while (i < rules->nb_philo)
 	{
@@ -45,6 +45,7 @@ void	*routine(void *arg)
 	t_philosopher	*philo;
 
 	philo = (t_philosopher *)arg;
+    print_state(philo->rules, philo->id, "is thinking");
 	while (1)
 	{
 		if (philo->is_thinking == 1)
