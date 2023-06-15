@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 16:48:18 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/14 13:07:21 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/15 14:19:04 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,20 @@
 int	philosopher(t_rules *rules)
 {
 	int	i;
+	int	res;
 
 	i = 0;
 	while (i < rules->nb_philo)
 	{
-		rules->philosopher[i].thread_id = pthread_create
-			(&(rules->philosopher[i].thread_id), NULL, &routine,
-				&(rules->philosopher[i]));
+		res = pthread_create(&(rules->philosopher[i].thread_id),
+			NULL, &routine, &(rules->philosopher[i]));
+		if (res != 0)
+		{
+			printf("Error\n");
+		}
 			i++;
 	}
 	while (1)
-
 	{
 		if (death_check(rules->philosopher) == 1
 			|| meal_check(rules->philosopher) == 1)
@@ -45,7 +48,7 @@ void	*routine(void *arg)
 	t_philosopher	*philo;
 
 	philo = (t_philosopher *)arg;
-    print_state(philo->rules, philo->id, "is thinking");
+	print_state(philo->rules, philo->id, "is thinking");
 	while (1)
 	{
 		if (philo->is_thinking == 1)
