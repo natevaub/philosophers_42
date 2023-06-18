@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 16:48:18 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/15 14:19:04 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/19 00:01:54 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,10 @@ int	philosopher(t_rules *rules)
 	while (i < rules->nb_philo)
 	{
 		res = pthread_create(&(rules->philosopher[i].thread_id),
-			NULL, &routine, &(rules->philosopher[i]));
+				NULL, &routine, &(rules->philosopher[i]));
 		if (res != 0)
-		{
-			printf("Error\n");
-		}
-			i++;
+			return (1);
+		i++;
 	}
 	while (1)
 	{

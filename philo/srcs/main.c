@@ -9,7 +9,6 @@ int	main(int ac, char **av)
 		printf("Initialization failed\n");
 		exit(1);
 	}
-		
 	// printf("|---	Nb of philo	=	%d		---|\n", rules->nb_philo);
 	// printf("|---	t_die		=	%d		---|\n", rules->t_die);
 	// printf("|---	t_sleep		=	%d		---|\n", rules->t_die);
