@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 15:18:42 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/19 16:13:19 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/11 18:49:14 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,6 @@ int	init_all(int ac, char **av, t_rules *rules)
 	init_basic_rules(av, rules);
 	rules->first_timestamp = ft_timestamp();
 	rules->died = 0;
-	rules->finished = 0;
 	if (init_mutex(rules) != 0)
 		return (1);
 	if (av[5])

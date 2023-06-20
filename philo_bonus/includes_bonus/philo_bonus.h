@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 20:02:13 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/19 20:23:42 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/18 11:57:12 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,43 +50,36 @@ typedef struct s_rules
 }	t_rules;
 
 /* --- checks.c --- */
-int				handle_death(t_philosopher *philo, int i);
-int				death_check(t_philosopher *philo);
-int				meal_check(t_philosopher *philo);
+int			handle_death(t_philosopher *philo, int i);
+int			death_check(t_philosopher *philo);
+int			meal_check(t_philosopher *philo);
 
-/* --- error.c --- */
+/* --- error-check.c --- */
 
-
-
-/* --- init.c --- */
-
-int				check_valid_rules(int ac, char **av, t_rules *rules);
-int				init_mutex(t_rules *rules);
-int				init_basic_rules(char **av, t_rules *rules);
-int				init_philosopher(t_rules *rules);
-int				init_all(int ac, char **av, t_rules *rules);
-
-/* --- main.c --- */
-
-/* --- memory.c --- */
-int				mutex_destruction_free(t_rules *rules);
-int				thread_exit_free(t_rules *rules);
-int				clean_philo(t_rules *rules);
-
-/* --- philo.c --- */
-int				philosopher(t_rules *rules);
-void			*routine(void *arg);
-
-/* --- utils.c --- */
-int				ft_philo_atoi(char *s);
-long long		ft_timestamp(void);
-long long		ft_time_diff(long long past, long long now);
-void			print_state(t_rules *rules, int id, char *str);
-
-/* --- state.c --- */
+/* --- handle-state.c --- */
 t_philosopher	get_philo(t_philosopher *philo, int direction);
 void			thinking_state(t_philosopher *philo);
 void			eating_state(t_philosopher *philo);
 void			sleeping_state(t_philosopher *philo);
+
+/* --- init.c --- */
+
+int			check_valid_rules(int ac, char **av, t_rules *rules);
+int			init_mutex(t_rules *rules);
+int			init_basic_rules(char **av, t_rules *rules);
+int			init_philosopher(t_rules *rules);
+int			init_all(int ac, char **av, t_rules *rules);
+
+/* --- main.c --- */
+
+/* --- philo.c --- */
+int			philosopher(t_rules *rules);
+void		*routine(void *arg);
+
+/* --- utils.c --- */
+int			ft_philo_atoi(char *s);
+long long	ft_timestamp(void);
+long long	ft_time_diff(long long past, long long now);
+void		print_state(t_rules *rules, int id, char *str);
 
 #endif

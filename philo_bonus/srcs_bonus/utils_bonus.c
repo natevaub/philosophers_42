@@ -40,7 +40,7 @@ long long	ft_time_diff(long long past, long long now)
 void	print_state(t_rules *rules, int id, char *str)
 {
 	pthread_mutex_lock(&(rules->writing));
-	if (!(rules->finished))
+	if (!(rules->died))
 	{
 		printf("%lld ", ft_timestamp() - rules->first_timestamp);
 		printf("%d ", id + 1);

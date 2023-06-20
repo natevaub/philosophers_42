@@ -7,11 +7,12 @@ INCLUDES_DIR	= ./includes/
 INCLUDES		= -I$(INCLUDES_DIR)
 
 SOURCES			=	checks.c					\
-					error-check.c				\
-					handle-state.c				\
+					error.c						\
 					init.c						\
 					main.c						\
+					memory.c					\
 					philo.c						\
+					state.c						\
 					utils.c						\
 
 OBJS_DIRECTORY	= objs/
