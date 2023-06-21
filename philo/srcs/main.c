@@ -25,8 +25,8 @@ int	main(int ac, char **av)
 	// 	printf("|---	t_lmeal		=	%lld		---|\n", rules->philosopher[i].t_last_meal);
 	// }
 	philosopher(rules);
+	
 
-	// printf("YOYOYO\n");
 
 	return (0);
 

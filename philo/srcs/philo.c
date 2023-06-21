@@ -6,16 +6,18 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 16:48:18 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/21 13:28:28 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/21 13:55:27 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+#include <string.h>
 
 int	philosopher(t_rules *rules)
 {
 	int	i;
 	int	res;
+	char *test;
 
 	i = 0;
 	while (i < rules->nb_philo)
@@ -38,7 +40,7 @@ int	philosopher(t_rules *rules)
 		pthread_join(rules->philosopher[i].thread_id, NULL);
 		i++;
 	}
-	clean_philo(rules);
+	// clean_philo(rules);
 	return (0);
 }
 
