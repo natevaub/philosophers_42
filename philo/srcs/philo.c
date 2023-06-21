@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 16:48:18 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/21 11:00:51 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/21 13:28:28 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,5 @@ void	*routine(void *arg)
 		if (philo->is_sleeping == 1)
 			sleeping_state(philo);
 	}
+	return (NULL);
 }

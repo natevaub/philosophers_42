@@ -1,5 +1,17 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/06/21 13:28:18 by nvaubien          #+#    #+#              #
+#    Updated: 2023/06/21 13:30:30 by nvaubien         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 CC				= gcc
-CFLAGS			= -g -Wall -Wextra -Werror
+CFLAGS			= -g #-Wall -Wextra -Werror
 NAME			= philo
 NAME_BONUS		= philo_bonus
 SRCS_PATH		= ./srcs/
@@ -23,14 +35,12 @@ HEADER_FILES	= $(addprefix $(INCLUDES_DIR), $(HEADER_LIST))
 
 all: $(NAME)
 
-$(OBJS_DIRECTORY)%.o: $(SRCS_PATH)%.c $(HEADER_FILES) | $(OBJS_DIRECTORY)
+$(OBJS_DIRECTORY)%.o: $(SRCS_PATH)%.c $(HEADER_FILES)
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $(INCLUDES) $< -o $@
 
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(INCLUDES) -o $(NAME)
-
-$(OBJS_DIRECTORY):
-	mkdir -p $(OBJS_DIRECTORY)
 
 clean:
 	rm -rf $(OBJS_DIRECTORY)
