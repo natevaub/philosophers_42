@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 15:11:44 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/19 21:18:41 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/21 10:36:21 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,6 @@ void	eating_state(t_philosopher *philo)
 {
 	if (philo->is_eating == 1)
 	{
-		if (philo->rules->finished == 1)
-		{
-			// printf("YOKOKO\n");
-			pthread_mutex_unlock(&(philo->rules->forks[philo->left_fork]));
-			pthread_mutex_unlock(&(philo->rules->forks[philo->right_fork]));
-			// printf("YOKOKI\n");
-		}
-		printf("ICI\n");
 		pthread_mutex_lock(&(philo->rules->state[philo->id]));
 		philo->t_last_meal = ft_timestamp();
 		pthread_mutex_unlock(&(philo->rules->state[philo->id]));

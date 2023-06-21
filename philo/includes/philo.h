@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 20:02:13 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/19 20:23:42 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/21 10:47:11 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int				init_all(int ac, char **av, t_rules *rules);
 
 /* --- memory.c --- */
 int				mutex_destruction_free(t_rules *rules);
-int				thread_exit_free(t_rules *rules);
+int				philosopher_free(t_rules *rules);
 int				clean_philo(t_rules *rules);
 
 /* --- philo.c --- */

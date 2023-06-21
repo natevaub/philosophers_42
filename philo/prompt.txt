@@ -1,0 +1,474 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   checks.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/06 20:25:44 by nvaubien          #+#    #+#             */
+/*   Updated: 2023/06/19 20:25:16 by nvaubien         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/philo.h"
+
+int	handle_death(t_philosopher *philo, int i)
+{
+	int	end;
+
+	end = 0;
+	print_state(philo->rules, philo[i].id, "died");
+	philo->rules->finished = 1;
+	philo->rules->died = 1;
+	pthread_mutex_unlock(&(philo->rules->state[i]));
+	end = 1;
+	return (end);
+}
+
+int	death_check(t_philosopher *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < philo->rules->nb_philo)
+	{
+		pthread_mutex_lock(&(philo->rules->state[i]));
+		if (philo[i].t_last_meal == -1)
+		{
+			if (ft_time_diff(philo->rules->first_timestamp, ft_timestamp())
+				>= philo->rules->t_die)
+					return (handle_death(philo, i));
+				
+			pthread_mutex_unlock(&(philo->rules->state[i]));
+		}
+		else
+		{
+			if (ft_time_diff(philo[i].t_last_meal, ft_timestamp())
+				> philo->rules->t_die)
+				return (handle_death(philo, i));
+			pthread_mutex_unlock(&(philo->rules->state[i]));
+		}
+		i++;
+	}
+	return (0);
+}
+
+int	meal_check(t_philosopher *philo)
+{
+	int	i;
+	int	count;
+
+	i = -1;
+	count = 0;
+	if (philo->rules->nb_eat == -1)
+		return (0);
+	while (i++ < philo->rules->nb_philo)
+	{
+		pthread_mutex_lock(&(philo->rules->state[i]));
+		if (philo[i].x_ate >= philo->rules->nb_eat)
+			count++;
+		else
+		{
+			pthread_mutex_unlock(&(philo->rules->state[i]));
+			break ;
+		}
+		if (count == philo->rules->nb_philo)
+		{
+			philo->rules->finished = 1;
+			pthread_mutex_unlock(&(philo->rules->state[i]));
+			return (1);
+		}
+		pthread_mutex_unlock(&(philo->rules->state[i]));
+	}
+	return (0);
+}
+#include "../includes/philo.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/30 15:18:42 by nvaubien          #+#    #+#             */
+/*   Updated: 2023/06/19 16:13:19 by nvaubien         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/philo.h"
+
+int	check_valid_rules(int ac, char **av, t_rules *rules)
+{
+	if (ac < 5 || ac > 6)
+		return (1);
+	if (ft_philo_atoi(av[1]) < 1 || ft_philo_atoi(av[2]) < 0
+		|| ft_philo_atoi(av[3]) < 0 || ft_philo_atoi(av[4]) < 0)
+		return (1);
+	return (0);
+}
+
+int	init_mutex(t_rules *rules)
+{
+	int	i;
+
+	i = 0;
+	rules->forks = malloc(sizeof(pthread_mutex_t) * rules->nb_philo);
+	rules->state = malloc(sizeof(pthread_mutex_t) * rules->nb_philo);
+	while (i < rules->nb_philo)
+	{
+		if (pthread_mutex_init(&(rules->forks[i]), NULL) != 0)
+			return (1);
+		if (pthread_mutex_init(&(rules->state[i]), NULL) != 0)
+			return (1);
+		i++;
+	}
+	if (pthread_mutex_init(&(rules->writing), NULL) != 0)
+		return (1);
+	return (0);
+}
+
+int	init_basic_rules(char **av, t_rules *rules)
+{
+	rules->nb_philo = ft_philo_atoi(av[1]);
+	rules->t_die = ft_philo_atoi(av[2]);
+	rules->t_eat = ft_philo_atoi(av[3]);
+	rules->t_sleep = ft_philo_atoi(av[4]);
+	rules->nb_eat = -1;
+	return (0);
+}
+
+int	init_philosopher(t_rules *rules)
+{
+	int	i;
+
+	i = 0;
+	rules->philosopher = malloc(sizeof(t_philosopher) * rules->nb_philo);
+	while (i < rules->nb_philo)
+	{
+		rules->philosopher[i].is_thinking = 1;
+		rules->philosopher[i].is_eating = 0;
+		rules->philosopher[i].is_sleeping = 0;
+		rules->philosopher[i].id = i;
+		rules->philosopher[i].x_ate = 0;
+		rules->philosopher[i].left_fork = i;
+		rules->philosopher[i].right_fork = (i + 1) % rules->nb_philo;
+		rules->philosopher[i].t_last_meal = -1;
+		rules->philosopher[i].rules = rules;
+		i++;
+	}
+	return (0);
+}
+
+int	init_all(int ac, char **av, t_rules *rules)
+{
+	if (check_valid_rules(ac, av, rules) != 0)
+		return (1);
+	init_basic_rules(av, rules);
+	rules->first_timestamp = ft_timestamp();
+	rules->died = 0;
+	rules->finished = 0;
+	if (init_mutex(rules) != 0)
+		return (1);
+	if (av[5])
+	{
+		rules->nb_eat = ft_philo_atoi(av[5]);
+		if (rules->nb_eat <= 0)
+			return (1);
+	}
+	else
+		rules->nb_eat = -1;
+	if (init_philosopher(rules) != 0)
+		return (1);
+	return (0);
+}
+#include "../includes/philo.h"
+
+int	main(int ac, char **av)
+{
+	t_rules *rules				= NULL;
+	rules = malloc(sizeof(t_rules));
+	if (init_all(ac, av, rules) != 0)
+	{
+		printf("Initialization failed\n");
+		exit(1);
+	}
+	// printf("|---	Nb of philo	=	%d		---|\n", rules->nb_philo);
+	// printf("|---	t_die		=	%d		---|\n", rules->t_die);
+	// printf("|---	t_sleep		=	%d		---|\n", rules->t_die);
+	// printf("|---	t_eat		=	%d		---|\n", rules->t_eat);
+	// printf("|---	nb_eat		=	%d		---|\n", rules->nb_eat);
+	// printf("|---	first		=	%lld	---|\n", rules->first_timestamp);
+	// for (int i = 0; i < rules->nb_philo; i++)
+	// {
+	// 	printf("----------------------------------------------------\n");
+	// 	printf("|---	Philo id	=	%d		---|\n", rules->philosopher[i].id);
+	// 	printf("|---	x ate		=	%d		---|\n", rules->philosopher[i].x_ate);
+	// 	printf("|---	left fork	=	%d		---|\n", rules->philosopher[i].left_fork);
+	// 	printf("|---	right fork	=	%d		---|\n", rules->philosopher[i].right_fork);
+	// 	printf("|---	t_lmeal		=	%lld		---|\n", rules->philosopher[i].t_last_meal);
+	// }
+	philosopher(rules);
+
+	// printf("YOYOYO\n");
+
+	return (0);
+
+}/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   memory.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/19 13:56:02 by nvaubien          #+#    #+#             */
+/*   Updated: 2023/06/21 10:48:21 by nvaubien         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/philo.h"
+
+int	mutex_destruction_free(t_rules *rules)
+{
+	int	i;
+
+	i = 0;
+	while (i < rules->nb_philo)
+	{
+		pthread_mutex_destroy(&(rules->forks[i]));
+		pthread_mutex_destroy(&(rules->state[i]));
+		i++;
+	}
+	free(rules->forks);
+	free(rules->state);
+	pthread_mutex_destroy(&(rules->writing));
+	return (0);
+}
+
+int	philosopher_free(t_rules *rules)
+{
+	free(rules->philosopher);
+	free(rules);
+	return (0);
+}
+
+int	clean_philo(t_rules *rules)
+{
+	mutex_destruction_free(rules);
+	philosopher_free(rules);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/11 16:48:18 by nvaubien          #+#    #+#             */
+/*   Updated: 2023/06/21 10:48:46 by nvaubien         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/philo.h"
+
+int	philosopher(t_rules *rules)
+{
+	int	i;
+	int	res;
+
+	i = 0;
+	while (i < rules->nb_philo)
+	{
+		res = pthread_create(&(rules->philosopher[i].thread_id),
+				NULL, &routine, &(rules->philosopher[i]));
+		if (res != 0)
+			return (1);
+		i++;
+	}
+	while (1)
+	{
+		if (death_check(rules->philosopher) == 1
+			|| meal_check(rules->philosopher) == 1)
+			break ;
+		usleep(2000);
+	}
+	while (i < rules->nb_philo)
+	{
+		pthread_join(rules->philosopher[i].thread_id, NULL);
+		i++;
+	}
+	clean_philo(rules);
+	return (0);
+}
+
+void	*routine(void *arg)
+{
+	t_philosopher	*philo;
+
+	philo = (t_philosopher *)arg;
+	print_state(philo->rules, philo->id, "is thinking");
+	while (1)
+	{
+		if (philo->rules->finished == 1)
+		{
+			usleep(100);
+			printf("Finished = %d\n", philo->rules->finished);
+			break ;
+		}
+		if (philo->is_thinking == 1)
+			thinking_state(philo);
+		if (philo->is_eating == 1)
+			eating_state(philo);
+		if (philo->is_sleeping == 1)
+			sleeping_state(philo);
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   state.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/02 15:11:44 by nvaubien          #+#    #+#             */
+/*   Updated: 2023/06/21 10:36:21 by nvaubien         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/philo.h"
+
+t_philosopher	get_philo(t_philosopher *philo, int direction)
+{
+	int	j;
+	int	n_philo;
+
+	j = philo->id;
+	n_philo = philo->rules->nb_philo;
+	if (direction)
+		j += 1;
+	else
+		j -= 1;
+	if (j < 0)
+		return (philo->rules->philosopher[n_philo - 1]);
+	else
+		return (philo->rules->philosopher[j % n_philo]);
+}
+
+void	thinking_state(t_philosopher *philo)
+{
+	if (philo->is_thinking == 1)
+	{
+		if (philo->id % 2 == 0)
+		{
+			while (get_philo(philo, 1).t_last_meal < philo->t_last_meal)
+			{
+			}
+			pthread_mutex_lock(&(philo->rules->forks[philo->right_fork]));
+			print_state(philo->rules, philo->id, "has taken a fork");
+			while (get_philo(philo, 0).t_last_meal < philo->t_last_meal)
+			{
+			}
+			pthread_mutex_lock(&(philo->rules->forks[philo->left_fork]));
+			print_state(philo->rules, philo->id, "has taken a fork");
+			philo->is_eating = 1;
+			philo->is_thinking = 0;
+		}
+		else
+		{
+			while (get_philo(philo, 0).t_last_meal < philo->t_last_meal)
+			{
+			}
+			pthread_mutex_lock(&(philo->rules->forks[philo->left_fork]));
+			print_state(philo->rules, philo->id, "has taken a fork");
+			while (get_philo(philo, 1).t_last_meal < philo->t_last_meal)
+			{
+			}
+			pthread_mutex_lock(&(philo->rules->forks[philo->right_fork]));
+			print_state(philo->rules, philo->id, "has taken a fork");
+			philo->is_eating = 1;
+			philo->is_thinking = 0;
+		}
+	}
+}
+
+void	eating_state(t_philosopher *philo)
+{
+	if (philo->is_eating == 1)
+	{
+		pthread_mutex_lock(&(philo->rules->state[philo->id]));
+		philo->t_last_meal = ft_timestamp();
+		pthread_mutex_unlock(&(philo->rules->state[philo->id]));
+		print_state(philo->rules, philo->id, "is eating");
+		usleep(philo->rules->t_eat * 1000);
+		pthread_mutex_unlock(&(philo->rules->forks[philo->right_fork]));
+		pthread_mutex_unlock(&(philo->rules->forks[philo->left_fork]));
+		pthread_mutex_lock(&(philo->rules->state[philo->id]));
+		philo->x_ate++;
+		pthread_mutex_unlock(&(philo->rules->state[philo->id]));
+		philo->is_eating = 0;
+		philo->is_sleeping = 1;
+	}
+}
+
+void	sleeping_state(t_philosopher *philo)
+{
+	if (philo->is_sleeping)
+	{
+		print_state(philo->rules, philo->id, "is sleeping");
+		usleep(philo->rules->t_sleep * 1000);
+		philo->is_sleeping = 0;
+		philo->is_thinking = 1;
+		print_state(philo->rules, philo->id, "is thinking");
+	}
+}
+#include "../includes/philo.h"
+
+int	ft_philo_atoi(char *s)
+{
+	int		res;
+	int		sign;
+
+	sign = 1;
+	res = 0;
+	while (*s == 32 || (*s >= '9' && *s <= 13))
+		s++;
+	if (*s == '-')
+	{
+		sign *= -1;
+		s++;
+	}
+	else if (*s == '+')
+		s++;
+	while (*s && *s >= '0' && *s <= '9')
+	{
+		res = res * 10 + *s - 48;
+		s++;
+	}
+	return (sign * res);
+}
+
+long long	ft_timestamp(void)
+{
+	struct timeval t;
+
+	gettimeofday(&t, NULL);
+	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
+}
+
+long long	ft_time_diff(long long past, long long now)
+{
+	return (now - past);
+}
+
+void	print_state(t_rules *rules, int id, char *str)
+{
+	pthread_mutex_lock(&(rules->writing));
+	// if (!(rules->finished))
+	// {
+		printf("%lld ", ft_timestamp() - rules->first_timestamp);
+		printf("%d ", id + 1);
+		printf("%s \n", str);
+	// }
+	pthread_mutex_unlock(&rules->writing);
+	return ;
+}

@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 16:48:18 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/19 21:53:05 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/21 11:00:51 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	philosopher(t_rules *rules)
 		pthread_join(rules->philosopher[i].thread_id, NULL);
 		i++;
 	}
-	// clean_philo(rules);
+	clean_philo(rules);
 	return (0);
 }
 
@@ -50,12 +50,11 @@ void	*routine(void *arg)
 	print_state(philo->rules, philo->id, "is thinking");
 	while (1)
 	{
-		// if (philo->rules->finished == 1)
-		// {
-		// 	usleep(100);
-		// 	printf("Finished = %d\n", philo->rules->finished);
-		// 	break ;
-		// }
+		if (philo->rules->finished == 1)
+		{
+			usleep(100);
+			break ;
+		}
 		if (philo->is_thinking == 1)
 			thinking_state(philo);
 		if (philo->is_eating == 1)
