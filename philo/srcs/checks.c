@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 20:25:44 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/19 20:25:16 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/21 14:18:12 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ int	death_check(t_philosopher *philo)
 		{
 			if (ft_time_diff(philo->rules->first_timestamp, ft_timestamp())
 				>= philo->rules->t_die)
-					return (handle_death(philo, i));
-				
+				return (handle_death(philo, i));
 			pthread_mutex_unlock(&(philo->rules->state[i]));
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 15:11:44 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/21 10:36:21 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/22 15:05:13 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_philosopher	get_philo(t_philosopher *philo, int direction)
 		return (philo->rules->philosopher[j % n_philo]);
 }
 
-void	thinking_state(t_philosopher *philo)
+void	thinking_state1(t_philosopher *philo)
 {
 	if (philo->is_thinking == 1)
 	{
@@ -45,25 +45,31 @@ void	thinking_state(t_philosopher *philo)
 			}
 			pthread_mutex_lock(&(philo->rules->forks[philo->left_fork]));
 			print_state(philo->rules, philo->id, "has taken a fork");
-			philo->is_eating = 1;
-			philo->is_thinking = 0;
 		}
 		else
-		{
-			while (get_philo(philo, 0).t_last_meal < philo->t_last_meal)
-			{
-			}
-			pthread_mutex_lock(&(philo->rules->forks[philo->left_fork]));
-			print_state(philo->rules, philo->id, "has taken a fork");
-			while (get_philo(philo, 1).t_last_meal < philo->t_last_meal)
-			{
-			}
-			pthread_mutex_lock(&(philo->rules->forks[philo->right_fork]));
-			print_state(philo->rules, philo->id, "has taken a fork");
-			philo->is_eating = 1;
-			philo->is_thinking = 0;
-		}
+			thinking_state2(philo);
+		philo->is_eating = 1;
+		philo->is_thinking = 0;
 	}
+}
+
+void	thinking_state2(t_philosopher *philo)
+{
+	if (philo->is_thinking == 1 && philo->id % 2 != 0)
+	{
+		while (get_philo(philo, 0).t_last_meal < philo->t_last_meal)
+		{
+		}
+		pthread_mutex_lock(&(philo->rules->forks[philo->left_fork]));
+		print_state(philo->rules, philo->id, "has taken a fork");
+		while (get_philo(philo, 1).t_last_meal < philo->t_last_meal)
+		{
+		}
+		pthread_mutex_lock(&(philo->rules->forks[philo->right_fork]));
+		print_state(philo->rules, philo->id, "has taken a fork");
+	}
+	philo->is_eating = 1;
+	philo->is_thinking = 0;
 }
 
 void	eating_state(t_philosopher *philo)

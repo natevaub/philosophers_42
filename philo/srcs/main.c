@@ -1,14 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/21 14:21:17 by nvaubien          #+#    #+#             */
+/*   Updated: 2023/06/21 14:21:35 by nvaubien         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/philo.h"
 
-int	main(int ac, char **av)
-{
-	t_rules *rules				= NULL;
-	rules = malloc(sizeof(t_rules));
-	if (init_all(ac, av, rules) != 0)
-	{
-		printf("Initialization failed\n");
-		exit(1);
-	}
 	// printf("|---	Nb of philo	=	%d		---|\n", rules->nb_philo);
 	// printf("|---	t_die		=	%d		---|\n", rules->t_die);
 	// printf("|---	t_sleep		=	%d		---|\n", rules->t_die);
@@ -24,10 +27,16 @@ int	main(int ac, char **av)
 	// 	printf("|---	right fork	=	%d		---|\n", rules->philosopher[i].right_fork);
 	// 	printf("|---	t_lmeal		=	%lld		---|\n", rules->philosopher[i].t_last_meal);
 	// }
+
+int	main(int ac, char **av)
+{
+	t_rules *rules				= NULL;
+	rules = malloc(sizeof(t_rules));
+	if (init_all(ac, av, rules) != 0)
+	{
+		printf("Initialization failed\n");
+		exit(1);
+	}
 	philosopher(rules);
-	
-
-
 	return (0);
-
 }
