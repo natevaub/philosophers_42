@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 20:02:13 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/21 17:31:08 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/25 22:35:41 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_rules
 	long long		first_timestamp;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*state;
+    pthread_mutex_t lock;
 	pthread_mutex_t	writing;
 	t_philosopher	*philosopher;
 }	t_rules;

@@ -6,12 +6,12 @@
 #    By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/21 13:28:18 by nvaubien          #+#    #+#              #
-#    Updated: 2023/06/21 13:39:26 by nvaubien         ###   ########.fr        #
+#    Updated: 2023/06/26 12:03:55 by nvaubien         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC				= gcc
-CFLAGS			= -g -pthread #-Wall -Wextra -Werror
+CFLAGS			= -g -pthread -fsanitize=thread #-Wall -Wextra -Werror
 NAME			= philo
 NAME_BONUS		= philo_bonus
 SRCS_PATH		= ./srcs/

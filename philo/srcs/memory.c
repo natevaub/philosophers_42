@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 13:56:02 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/21 13:51:02 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/26 11:21:28 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ int	mutex_destruction_free(t_rules *rules)
 	while (i < rules->nb_philo)
 	{
 		pthread_mutex_destroy(&(rules->forks[i]));
-		pthread_mutex_destroy(&(rules->state[i]));
 		i++;
 	}
 	free(rules->forks);

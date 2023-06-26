@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 15:18:42 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/19 16:13:19 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/25 22:36:24 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	init_mutex(t_rules *rules)
 			return (1);
 		i++;
 	}
+    if (pthread_mutex_init(&(rules->lock), NULL) != 0)
 	if (pthread_mutex_init(&(rules->writing), NULL) != 0)
 		return (1);
 	return (0);
@@ -49,6 +50,7 @@ int	init_basic_rules(char **av, t_rules *rules)
 	rules->t_eat = ft_philo_atoi(av[3]);
 	rules->t_sleep = ft_philo_atoi(av[4]);
 	rules->nb_eat = -1;
+    pthread_mutex_init(&rules->writing, NULL);
 	return (0);
 }
 
