@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 20:02:13 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/25 22:35:41 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/27 15:47:47 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <sys/time.h>
+
+# define ERR_MALLOC "Error: Failed to allocate memory with malloc\n"
+# define ERR_MUTEX "Error: Failed to create mutex\n"
+# define ERR_THREAD "Error: Failed to create thread\n"
+# define ERR_INVALID_INPUT "Error: Invalid input\n"
+
 
 typedef struct s_philosopher
 {
@@ -45,7 +51,7 @@ typedef struct s_rules
 	long long		first_timestamp;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*state;
-    pthread_mutex_t lock;
+	pthread_mutex_t lock;
 	pthread_mutex_t	writing;
 	t_philosopher	*philosopher;
 }	t_rules;
@@ -65,6 +71,7 @@ int				init_philosopher(t_rules *rules);
 int				init_all(int ac, char **av, t_rules *rules);
 
 /* --- main.c --- */
+int				err_msg(char *s);
 
 /* --- memory.c --- */
 int				mutex_destruction_free(t_rules *rules);

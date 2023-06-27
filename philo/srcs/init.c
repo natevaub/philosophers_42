@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 15:18:42 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/25 22:36:24 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/27 15:52:15 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,22 +25,23 @@ int	check_valid_rules(int ac, char **av, t_rules *rules)
 int	init_mutex(t_rules *rules)
 {
 	int	i;
+	int	err;
 
 	i = 0;
+	err = 0;
 	rules->forks = malloc(sizeof(pthread_mutex_t) * rules->nb_philo);
 	rules->state = malloc(sizeof(pthread_mutex_t) * rules->nb_philo);
 	while (i < rules->nb_philo)
 	{
 		if (pthread_mutex_init(&(rules->forks[i]), NULL) != 0)
-			return (1);
-		if (pthread_mutex_init(&(rules->state[i]), NULL) != 0)
-			return (1);
+			return (err_msg(ERR_MUTEX));
 		i++;
 	}
-    if (pthread_mutex_init(&(rules->lock), NULL) != 0)
+	if (pthread_mutex_init(&(rules->lock), NULL) != 0)
+		return (err_msg(ERR_MUTEX));
 	if (pthread_mutex_init(&(rules->writing), NULL) != 0)
-		return (1);
-	return (0);
+		return (err_msg(ERR_MUTEX));
+	return (err);
 }
 
 int	init_basic_rules(char **av, t_rules *rules)
@@ -50,7 +51,6 @@ int	init_basic_rules(char **av, t_rules *rules)
 	rules->t_eat = ft_philo_atoi(av[3]);
 	rules->t_sleep = ft_philo_atoi(av[4]);
 	rules->nb_eat = -1;
-    pthread_mutex_init(&rules->writing, NULL);
 	return (0);
 }
 
@@ -60,6 +60,8 @@ int	init_philosopher(t_rules *rules)
 
 	i = 0;
 	rules->philosopher = malloc(sizeof(t_philosopher) * rules->nb_philo);
+	if (!rules->philosopher)
+		return (err_msg(ERR_MALLOC));
 	while (i < rules->nb_philo)
 	{
 		rules->philosopher[i].is_thinking = 1;
