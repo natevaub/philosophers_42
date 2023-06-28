@@ -6,13 +6,13 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 15:18:42 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/27 15:52:15 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/28 10:08:35 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-int	check_valid_rules(int ac, char **av, t_rules *rules)
+int	check_valid_rules(int ac, char **av)
 {
 	if (ac < 5 || ac > 6)
 		return (1);
@@ -80,7 +80,7 @@ int	init_philosopher(t_rules *rules)
 
 int	init_all(int ac, char **av, t_rules *rules)
 {
-	if (check_valid_rules(ac, av, rules) != 0)
+	if (check_valid_rules(ac, av) != 0)
 		return (1);
 	init_basic_rules(av, rules);
 	rules->first_timestamp = ft_timestamp();

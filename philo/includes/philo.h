@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 20:02:13 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/27 15:47:47 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/28 10:08:59 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int				meal_check(t_philosopher *philo);
 /* --- error.c --- */
 
 /* --- init.c --- */
-int				check_valid_rules(int ac, char **av, t_rules *rules);
+int				check_valid_rules(int ac, char **av);
 int				init_mutex(t_rules *rules);
 int				init_basic_rules(char **av, t_rules *rules);
 int				init_philosopher(t_rules *rules);
