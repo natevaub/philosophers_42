@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 16:48:18 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/27 15:53:22 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/28 11:27:38 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	*routine(void *arg)
 		if (philo->rules->finished == 1)
 		{
 			pthread_mutex_unlock(&(philo->rules->lock));
-			// usleep(1);
 			break ;
 		}
 		pthread_mutex_unlock(&(philo->rules->lock));

@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 14:18:32 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/26 11:05:33 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/28 11:37:45 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,14 @@ long long	ft_time_diff(long long past, long long now)
 void	print_state(t_rules *rules, int id, char *str)
 {
 	pthread_mutex_lock(&(rules->writing));
-    pthread_mutex_lock(&(rules->lock));
+	pthread_mutex_lock(&(rules->lock));
 	if (!(rules->finished))
 	{
 		printf("%lld ", ft_timestamp() - rules->first_timestamp);
 		printf("%d ", id + 1);
-		printf("%s \n", str);
+		printf("%s\n", str);
 	}
 	pthread_mutex_unlock(&rules->writing);
-    pthread_mutex_unlock(&(rules->lock));
+	pthread_mutex_unlock(&(rules->lock));
 	return ;
 }

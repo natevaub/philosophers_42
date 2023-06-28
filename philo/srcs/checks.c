@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 20:25:44 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/27 15:28:45 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/28 11:57:38 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,19 @@ int	handle_death(t_philosopher *philo, int i)
 	return (end);
 }
 
+int	death_check_helper(t_philosopher *philo, int i)
+{
+	if (ft_time_diff(philo[i].t_last_meal, ft_timestamp())
+		> philo->rules->t_die)
+	{
+		pthread_mutex_unlock(&(philo->rules->lock));
+		handle_death(philo, i);
+		return (1);
+	}
+	pthread_mutex_unlock(&(philo->rules->lock));
+	return (0);
+}
+
 int	death_check(t_philosopher *philo)
 {
 	int	i;
@@ -41,24 +54,24 @@ int	death_check(t_philosopher *philo)
 			{
 				pthread_mutex_unlock(&(philo->rules->lock));
 				handle_death(philo, i);
-				return 1;
+				return (1);
 			}
 			pthread_mutex_unlock(&(philo->rules->lock));
 		}
 		else
 		{
-			if (ft_time_diff(philo[i].t_last_meal, ft_timestamp())
-				> philo->rules->t_die)
-			{
-				pthread_mutex_unlock(&(philo->rules->lock));
-				handle_death(philo, i);
-				return 1;
-			}
-			pthread_mutex_unlock(&(philo->rules->lock));
+			if (death_check_helper(philo, i) == 1)
+				return (1);
 		}
 		i++;
 	}
 	return (0);
+}
+
+void	set_finish_and_unlock(t_philosopher *philo, int i)
+{
+	philo->rules->finished = 1;
+	pthread_mutex_unlock(&(philo->rules->lock));
 }
 
 int	meal_check(t_philosopher *philo)
@@ -82,8 +95,7 @@ int	meal_check(t_philosopher *philo)
 		}
 		if (count == philo->rules->nb_philo)
 		{
-			philo->rules->finished = 1;
-			pthread_mutex_unlock(&(philo->rules->lock));
+			set_finish_and_unlock(philo, i);
 			return (1);
 		}
 		pthread_mutex_unlock(&(philo->rules->lock));

@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 20:02:13 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/28 10:08:59 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/06/28 12:00:06 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 # define ERR_MUTEX "Error: Failed to create mutex\n"
 # define ERR_THREAD "Error: Failed to create thread\n"
 # define ERR_INVALID_INPUT "Error: Invalid input\n"
-
 
 typedef struct s_philosopher
 {
@@ -51,14 +50,16 @@ typedef struct s_rules
 	long long		first_timestamp;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*state;
-	pthread_mutex_t lock;
+	pthread_mutex_t	lock;
 	pthread_mutex_t	writing;
 	t_philosopher	*philosopher;
 }	t_rules;
 
 /* --- checks.c --- */
 int				handle_death(t_philosopher *philo, int i);
+int				death_check_helper(t_philosopher *philo, int i);
 int				death_check(t_philosopher *philo);
+void			set_finish_and_unlock(t_philosopher *philo, int i);
 int				meal_check(t_philosopher *philo);
 
 /* --- error.c --- */
