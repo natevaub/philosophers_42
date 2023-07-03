@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 20:02:13 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/28 12:00:06 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/07/03 11:32:52 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ typedef struct s_rules
 int				handle_death(t_philosopher *philo, int i);
 int				death_check_helper(t_philosopher *philo, int i);
 int				death_check(t_philosopher *philo);
-void			set_finish_and_unlock(t_philosopher *philo, int i);
+void			set_finish_and_unlock(t_philosopher *philo);
 int				meal_check(t_philosopher *philo);
 
 /* --- error.c --- */

@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 20:25:44 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/28 11:57:38 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/07/03 11:33:17 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	death_check(t_philosopher *philo)
 	return (0);
 }
 
-void	set_finish_and_unlock(t_philosopher *philo, int i)
+void	set_finish_and_unlock(t_philosopher *philo)
 {
 	philo->rules->finished = 1;
 	pthread_mutex_unlock(&(philo->rules->lock));
@@ -95,7 +95,7 @@ int	meal_check(t_philosopher *philo)
 		}
 		if (count == philo->rules->nb_philo)
 		{
-			set_finish_and_unlock(philo, i);
+			set_finish_and_unlock(philo);
 			return (1);
 		}
 		pthread_mutex_unlock(&(philo->rules->lock));
