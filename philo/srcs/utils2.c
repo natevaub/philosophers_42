@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 21:45:47 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/07/13 22:15:32 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/07/13 22:42:02 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	is_valid_input(char *str)
 			return (1);
 		i++;
 	}
-	if (ft_strlen(str) >= 10 && ft_strncmp(str, INT_MAX, 10) < 0)
+	if (ft_strlen(str) >= 10 && ft_strncmp(str, INT_MAX, len) != 0)
 		return (1);
 	return (0);
 }
