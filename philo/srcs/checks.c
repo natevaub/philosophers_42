@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 20:25:44 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/07/03 11:33:17 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/07/13 18:12:29 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@ int	handle_death(t_philosopher *philo, int i)
 	pthread_mutex_lock(&(philo->rules->lock));
 	philo->rules->finished = 1;
 	philo->rules->died = 1;
+	if (philo->rules->nb_philo == 1)
+	{
+		pthread_mutex_unlock(&(philo->rules->forks[philo->id]));
+	}
 	pthread_mutex_unlock(&(philo->rules->lock));
 	end = 1;
 	return (end);

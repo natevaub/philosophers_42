@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 14:18:32 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/28 11:37:45 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/07/13 18:11:09 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,10 @@ void	print_state(t_rules *rules, int id, char *str)
 	pthread_mutex_unlock(&rules->writing);
 	pthread_mutex_unlock(&(rules->lock));
 	return ;
+}
+
+void	helper_one_philo(t_philosopher *philo)
+{
+	pthread_mutex_lock(&(philo->rules->forks[philo->right_fork]));
+	print_state(philo->rules, philo->id, "has taken a fork");
 }

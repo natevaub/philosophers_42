@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 16:48:18 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/07/03 11:35:10 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/07/13 21:21:15 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,11 @@ void	*routine(void *arg)
 		if (philo->is_thinking == 1)
 			thinking_state1(philo);
 		if (philo->is_eating == 1)
+		{
 			eating_state(philo);
+			if (philo->x_ate >= philo->rules->nb_eat)
+				break;
+		}
 		if (philo->is_sleeping == 1)
 			sleeping_state(philo);
 	}

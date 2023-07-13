@@ -6,7 +6,7 @@
 #    By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/21 13:28:18 by nvaubien          #+#    #+#              #
-#    Updated: 2023/07/03 11:34:30 by nvaubien         ###   ########.fr        #
+#    Updated: 2023/07/13 21:55:12 by nvaubien         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,8 @@ SOURCES			=	checks.c					\
 					memory.c					\
 					philo.c						\
 					state.c						\
-					utils.c						\
+					utils1.c					\
+					utils2.c					\
 
 OBJS_DIRECTORY	= objs/
 OBJS_LIST		= $(patsubst %.c, %.o, $(SOURCES))

@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 20:02:13 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/07/03 11:32:52 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/07/13 21:57:21 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 
+# define INT_MAX "2147483647"
 # define ERR_MALLOC "Error: Failed to allocate memory with malloc\n"
 # define ERR_MUTEX "Error: Failed to create mutex\n"
 # define ERR_THREAD "Error: Failed to create thread\n"
@@ -83,11 +84,18 @@ int				clean_philo(t_rules *rules);
 int				philosopher(t_rules *rules);
 void			*routine(void *arg);
 
-/* --- utils.c --- */
+/* --- utils1.c --- */
 int				ft_philo_atoi(char *s);
 long long		ft_timestamp(void);
 long long		ft_time_diff(long long past, long long now);
 void			print_state(t_rules *rules, int id, char *str);
+void			helper_one_philo(t_philosopher *philo);
+
+/* --- utils2.c --- */
+int				is_valid_input(char *str);
+int				ft_strncmp(const char *s1, const char *s2, size_t n);
+size_t			ft_strlen(const char *string);
+int				ft_isdigit(int c);
 
 /* --- state.c --- */
 t_philosopher	get_philo(t_philosopher *philo, int direction);

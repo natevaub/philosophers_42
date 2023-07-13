@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 15:18:42 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/28 10:08:35 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/07/13 22:04:28 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,11 @@ int	check_valid_rules(int ac, char **av)
 {
 	if (ac < 5 || ac > 6)
 		return (1);
-	if (ft_philo_atoi(av[1]) < 1 || ft_philo_atoi(av[2]) < 0
-		|| ft_philo_atoi(av[3]) < 0 || ft_philo_atoi(av[4]) < 0)
+	if (is_valid_input(av[1]) || is_valid_input(av[2]) || \
+		is_valid_input(av[3]) || is_valid_input(av[4]))
+		return (1);
+	if (ft_philo_atoi(av[1]) < 1 || ft_philo_atoi(av[2]) <= 0
+		|| ft_philo_atoi(av[3]) <= 0 || ft_philo_atoi(av[4]) <= 0)
 		return (1);
 	return (0);
 }

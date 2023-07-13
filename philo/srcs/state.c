@@ -6,7 +6,7 @@
 /*   By: nvaubien <nvaubien@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 15:11:44 by nvaubien          #+#    #+#             */
-/*   Updated: 2023/06/28 11:25:19 by nvaubien         ###   ########.fr       */
+/*   Updated: 2023/07/13 18:12:13 by nvaubien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,9 @@ t_philosopher	get_philo(t_philosopher *philo, int direction)
 
 void	thinking_state1(t_philosopher *philo)
 {
-	if (philo->is_thinking == 1)
+	if (philo->rules->nb_philo == 1)
+		helper_one_philo(philo);
+	else if (philo->is_thinking == 1)
 	{
 		if (philo->id % 2 == 0)
 		{
